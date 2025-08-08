@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts";
@@ -23,6 +23,37 @@ const LogActivity = () => {
   const [caloriesBurned, setCaloriesBurned] = useState(0);
   const [stepsWalked, setStepsWalked] = useState(0);
   const [workoutsDone, setWorkoutsDone] = useState(0);
+
+  // ✅ Load data from localStorage on mount
+  useEffect(() => {
+    const savedActivities = JSON.parse(localStorage.getItem("activities")) || [];
+    const savedMeals = JSON.parse(localStorage.getItem("meals")) || [];
+    const savedWaterLogs = JSON.parse(localStorage.getItem("waterLogs")) || [];
+    const savedStats = JSON.parse(localStorage.getItem("stats")) || {
+      caloriesBurned: 0,
+      stepsWalked: 0,
+      workoutsDone: 0,
+    };
+
+    setActivities(savedActivities);
+    setMeals(savedMeals);
+    setWaterLogs(savedWaterLogs);
+    setCaloriesBurned(savedStats.caloriesBurned);
+    setStepsWalked(savedStats.stepsWalked);
+    setWorkoutsDone(savedStats.workoutsDone);
+  }, []);
+
+  // ✅ Save data to localStorage whenever state changes
+  useEffect(() => {
+    localStorage.setItem("activities", JSON.stringify(activities));
+    localStorage.setItem("meals", JSON.stringify(meals));
+    localStorage.setItem("waterLogs", JSON.stringify(waterLogs));
+    localStorage.setItem("stats", JSON.stringify({
+      caloriesBurned,
+      stepsWalked,
+      workoutsDone
+    }));
+  }, [activities, meals, waterLogs, caloriesBurned, stepsWalked, workoutsDone]);
 
   const handleLogWorkout = () => {
     if (!workoutType || !duration || !calories) {
@@ -107,7 +138,6 @@ const LogActivity = () => {
       </div>
 
       <div className="log-form">
-        
         <div className="tabs">
           <button className={activeTab === "workout" ? "active-tab" : ""} onClick={() => setActiveTab("workout")}>WORKOUT</button>
           <button className={activeTab === "meal" ? "active-tab" : ""} onClick={() => setActiveTab("meal")}>MEAL</button>
@@ -170,8 +200,8 @@ const LogActivity = () => {
           </>
         )}
       </div>
-      
-       <div className="graph-section">
+
+      <div className="graph-section">
         <h3>Workout Progress</h3>
         <LineChart width={500} height={250} data={graphData}>
           <CartesianGrid strokeDasharray="3 3" />

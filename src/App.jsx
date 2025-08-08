@@ -7,8 +7,10 @@ import Layout from "./Components/Layout";
 import Progress from "./Components/Progress";
 import GoalSettings from "./Components/GoalSettings";
 function App() {
+
   return (
     <>
+    
       <Routes>
         <Route path="/" element={<AuthPage />} />
         <Route path="/" element={ <Layout />} >

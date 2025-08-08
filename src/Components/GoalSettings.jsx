@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "./Styles/GoalSettings.css"
+import React, { useState, useEffect } from "react";
+import "./Styles/GoalSettings.css";
 
 const GoalSettings = () => {
   const [goal, setGoal] = useState({
@@ -10,6 +10,19 @@ const GoalSettings = () => {
     workoutFreq: "",
     calorieTarget: ""
   });
+
+  // Load data from localStorage when component mounts
+  useEffect(() => {
+    const savedGoal = localStorage.getItem("goalSettings");
+    if (savedGoal) {
+      setGoal(JSON.parse(savedGoal));
+    }
+  }, []);
+
+  // Save to localStorage whenever goal changes
+  useEffect(() => {
+    localStorage.setItem("goalSettings", JSON.stringify(goal));
+  }, [goal]);
 
   const handleChange = (e) => {
     setGoal({ ...goal, [e.target.name]: e.target.value });
